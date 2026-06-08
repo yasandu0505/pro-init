@@ -4,18 +4,6 @@ set -e
 
 echo "Running project initialization script"
 
-# read -p "What is the project name? " PROJECT_NAME
-
-# # regex explanation:
-# # ^                start
-# # [a-zA-Z0-9_-]+   letters, numbers, _ or -
-# # $                end
-
-# if [[ ! "$PROJECT_NAME" =~ ^[a-zA-Z0-9_-]+$ ]]; then 
-#     echo "Error: Project name can only contain letters, numbers, underscores, and hyphens."
-#     exit 1
-# fi
-
 
 while true; do
     read -p "Project name: " PROJECT_NAME
@@ -70,6 +58,9 @@ done
 echo "Creating your project directory....."
 PROJECT_DIR="${PROJECT_LOCAL_LOCATION_PATH%/}/${PROJECT_NAME}"
 mkdir -p "$PROJECT_DIR"
+-d "$PROJECT_DIR" || { 
+    echo "Failed to create project directory at ${PROJECT_DIR}"; exit 1; 
+    }
 echo "Project created at ${PROJECT_DIR}"
 
 # create a README.md file with the project name and description
@@ -82,6 +73,9 @@ $PROJECT_DESCRIPTION
 
 ### Author $PROJECT_AUTHOR
 " > "$PROJECT_DIR/README.md"
+-f "$PROJECT_DIR/README.md" || { 
+    echo "Failed to create README.md file at ${PROJECT_DIR}/README.md"; exit 1; 
+    }
 echo "README.md file created with project name and description at ${PROJECT_DIR}/README.md"
 
 # initialize a git repository in the project directory
