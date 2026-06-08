@@ -4,11 +4,67 @@ set -e
 
 echo "Running project initialization script"
 
-read -p "What is the project name? " PROJECT_NAME
-read -p "What is the project description? " PROJECT_DESCRIPTION
-read -p "Who is the project author? " PROJECT_AUTHOR
-read -p "What is the project repository url? in SSH format: " PROJECT_REPOSITORY_URL
-read -p "What is the project local location path?  (Absolute path): " PROJECT_LOCAL_LOCATION_PATH
+# read -p "What is the project name? " PROJECT_NAME
+
+# # regex explanation:
+# # ^                start
+# # [a-zA-Z0-9_-]+   letters, numbers, _ or -
+# # $                end
+
+# if [[ ! "$PROJECT_NAME" =~ ^[a-zA-Z0-9_-]+$ ]]; then 
+#     echo "Error: Project name can only contain letters, numbers, underscores, and hyphens."
+#     exit 1
+# fi
+
+
+while true; do
+    read -p "Project name: " PROJECT_NAME
+
+    if [[ "$PROJECT_NAME" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+        break
+    fi
+
+    echo "Invalid project name. Use only letters, numbers, - and _."
+done
+
+
+read -p "Project description? " PROJECT_DESCRIPTION
+read -p "Project author? " PROJECT_AUTHOR
+
+while true; do
+
+    read -p "Project repository URL? in SSH format: " PROJECT_REPOSITORY_URL
+
+    if [[ "$PROJECT_REPOSITORY_URL" =~ ^git@[^:]+:.+\.git$ ]]; then
+        break
+    fi
+
+    echo "Invalid SSH URL. Example:"
+    echo "git@github.com:username/repository.git"
+
+done
+
+
+while true; do
+    read -p "Project location path: " PROJECT_LOCAL_LOCATION_PATH
+
+    if [[ "$PROJECT_LOCAL_LOCATION_PATH" != /* ]]; then
+        echo "Please enter an absolute path."
+        continue
+    fi
+
+    if [[ ! -d "$PROJECT_LOCAL_LOCATION_PATH" ]]; then
+        echo "Directory does not exist."
+        continue
+    fi
+
+    if [[ ! -w "$PROJECT_LOCAL_LOCATION_PATH" ]]; then
+        echo "Directory is not writable."
+        continue
+    fi
+
+    break
+done
 
 # create the project directory
 echo "Creating your project directory....."
